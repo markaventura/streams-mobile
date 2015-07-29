@@ -1,0 +1,16 @@
+{
+  "name": "StreamsMobile",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node_modules/react-native/packager/packager.sh"
+  },
+  "dependencies": {
+    "moment": "^2.10.6",
+    "react-native": "^0.7.1",
+    "react-native-icons": "^0.2.0"
+  },
+  "devDependencies": {
+    "react-intl": "^1.2.0"
+  }
+}
