@@ -8,10 +8,8 @@
   "dependencies": {
     "moment": "^2.10.6",
     "moment-timezone": "^0.4.0",
-    "react-native": "^0.7.1",
-    "react-native-icons": "^0.2.0"
-  },
-  "devDependencies": {
-    "react-intl": "^1.2.0"
+    "react-native": "^0.8.0",
+    "react-native-icons": "^0.3.1",
+    "react-native-router": "^0.2.1"
   }
 }

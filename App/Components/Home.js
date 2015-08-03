@@ -78,7 +78,8 @@ var Home = React.createClass({
           </View>
         </View>
         <View style={styles.bottomLog}>
-          <ListView
+          <ListView 
+            style={styles.listView}
             dataSource={this.state.dataSource}
             renderRow={this._renderRow}
           />
@@ -94,35 +95,60 @@ var Home = React.createClass({
 
     return (
       <View style={styles.worklogContainer}>
-        <Text style={styles.startTime}>{moment(worklog.started_at).format('h:mm a')}</Text>
+        <View style={styles.projectStartTimeContainer}>
+          <Text style={styles.startTime}>{moment(worklog.started_at).format('h:mm a')}</Text>
+        </View>
 
         <View style={styles.projectNameContainer}>
           <Text style={styles.wlProjectName}>{worklog.project_name}</Text>
-          <Text>{worklog.message}</Text>
+          <Text style={styles.wlProjectLog}>{worklog.message}</Text>
         </View>
 
-        <Text>{_hour == "0" ? '' : _hour}</Text>
-        <Text>{_hour == "0" ? '' : "h"}</Text>
+        <View style={styles.projectTimeContainer}>
+          <Text style={styles.timeNumber}>{_hour == "0" ? '' : _hour}</Text>
+          <Text>{_hour == "0" ? '' : "h"}</Text>
 
-        <Text>{_minutes}</Text>
-        <Text>min</Text>
+          <Text style={styles.timeNumber}>{_minutes}</Text>
+          <Text>min</Text>
+        </View>
       </View>
     );
   }
 });
 
 var styles = StyleSheet.create({
+  projectStartTimeContainer: {
+    flex: 1,
+    paddingLeft: 35
+  },
+  timeNumber: {
+    fontWeight: 'bold',
+    fontSize: 20,
+    color: '#4A4A4A'
+  },
+  projectTimeContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: 50,
+    justifyContent: 'flex-end',
+    paddingRight: 35
+  },
+  wlProjectLog: {
+    color: '#4A4A4A'
+  },
   wlProjectName: {
     fontSize: 15
   },
   projectNameContainer: {
+    flex: 2,
     flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
+    paddingLeft: 20,
+    paddingRight: 20
   },
   startTime: {
     fontSize: 18,
-    width: 100
+    width: 80
   },
   topLog: {
     flex: 2,
@@ -133,8 +159,6 @@ var styles = StyleSheet.create({
   },
   bottomLog: {
     flex: 3,
-    justifyContent: 'center',
-    alignItems: 'center',
     paddingTop: 10
   },
   hour: {
@@ -149,8 +173,8 @@ var styles = StyleSheet.create({
   hourContainer: {
     borderRadius: 75, 
     backgroundColor: '#4A4A4A',
-    width: 150, 
     height: 150,
+    width: 150,
     justifyContent: 'center',
     alignItems: 'center'
   },
@@ -167,12 +191,13 @@ var styles = StyleSheet.create({
     right: 0,
   },
   listView: {
-    paddingTop: 20,
     backgroundColor: '#F5FCFF',
   },
   worklogContainer: {
+    flex: 3,
     flexDirection: 'row',
-    padding: 10,
+    paddingTop: 20,
+    paddingBottom: 20,
     borderWidth: 1,
     borderBottomColor: '#CCC',
     borderColor: 'transparent'
