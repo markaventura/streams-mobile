@@ -22,6 +22,10 @@ module.exports = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     height: 40
+  },
+  mainContainer: {
+    flex: 5,
+    flexDirection: 'column'
   }
 
 });

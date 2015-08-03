@@ -4,12 +4,16 @@ var defaultStyle = require('../Styles/Default');
 var moment = require('moment');
 var api = require('../Utils/api');
 var Home = require('./Home');
-var now = moment().format('MM');
+var now = moment().format('LL');
+
+var TOKEN_KEY = '@StreamsMobileUser:token';
+var USER_ID_KEY = '@StreamsMobileUser:user_id';
 
 var {
   Image,
   View,
   Text,
+  AsyncStorage,
   TextInput,
   StyleSheet,
   TouchableHighlight
@@ -46,22 +50,34 @@ var styles = StyleSheet.create({
 });
 
 class Login extends React.Component{
+  handleResponse(res) {
+    if(res.authentication_token == undefined) {
+      this.setState({message: message});
+    }else{
+      this.saveUser(res);
+      this.navigateToHome();
+    }
+  }
+  saveUser(user) {
+    AsyncStorage.multiSet([[TOKEN_KEY, user.authentication_token], [USER_ID_KEY, user.id.toString()]])
+      .then(()        => this.setState({message: 'Yeah!'}))
+      .catch((error)  => this.setState({message: 'AsyncStorage error: ' + error.message}))
+      .done();
+  }
   goToHome() {
-    this.setState({
-      isLoading: true,
-    });
+    this.setState({isLoading: true});
     api.signIn(this.state.username, this.state.password)
       .then((jsonRes) => 
         {
           jsonRes = jsonRes || {};
-          this.props.navigator.push({
-            component: Home,
-            title: now,
-            passProps: {
-              user: jsonRes
-            }
-          });
+          this.handleResponse(jsonRes);
         });
+  }
+  navigateToHome(){
+    this.props.navigator.push({
+      component: Home,
+      title: now
+    });
   }
   handleUsernameChange(e){
     this.setState({
@@ -73,7 +89,18 @@ class Login extends React.Component{
       password: e.nativeEvent.text
     })
   }
+  componentWillMount() {
+    AsyncStorage.getItem(TOKEN_KEY)
+      .then((value) => {
+        if (value !== null){
+          this.navigateToHome()
+        }
+      })
+      .catch((error) => this.setState({message: error.message}))
+      .done();
+  }
   render(){
+    console.log("baduy");
     return (
       <View style={styles.container}>
         <View style={styles.halfHeight}>
