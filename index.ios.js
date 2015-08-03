@@ -22,6 +22,9 @@ var StreamsMobile = React.createClass({
 
     return (
       <NavigatorIOS
+        titleTextColor='#fff'
+        tintColor='#fff'
+        barTintColor='#5FB2B7'
         style={styles.container}
         initialRoute={{
           title: 'Github Note Taker',
@@ -33,8 +36,7 @@ var StreamsMobile = React.createClass({
 
 var styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#111111'
+    flex: 1
   },
 });
 

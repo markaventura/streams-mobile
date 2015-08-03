@@ -8,58 +8,22 @@ var {
   View,
   Text,
   StyleSheet,
-  AsyncStorage
+  AsyncStorage,
+  ListView
 } = React;
 
 const TOKEN_KEY     = '@StreamsMobileUser:token';
 const USER_ID_KEY   = '@StreamsMobileUser:user_id';
 
-var styles = StyleSheet.create({
-  topLog: {
-    flex: 2,
-    backgroundColor: '#ffffff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingTop: 50
-  },
-  bottomLog: {
-    flex: 3,
-    backgroundColor: '#000000',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingTop: 10
-  },
-  hour: {
-    fontSize: 60,
-    fontWeight: 'bold',
-    color: '#fff'
-  },
-  hourContainer: {
-    borderRadius: 75, 
-    backgroundColor: '#4A4A4A',
-    width: 150, 
-    height: 150,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  minutesContainer: {
-    position: 'absolute',
-    backgroundColor: '#4A4A4A',
-    width: 150, 
-    height: 150,
-    justifyContent: 'center',
-    alignItems: 'center'
-  }
-});
-
-class Home extends React.Component{
-  goLogin(){
+var Home = React.createClass({
+  goLogin: function(){
     this.props.navigator.push({
       component: Login,
       title: 'Login'
     });
-  }
-  getWorklogs(userId, token) {
+  },
+
+  getWorklogs: function(userId, token) {
     api.getWorklogs(userId, token)
       .then((jsonRes) => 
         {
@@ -68,16 +32,28 @@ class Home extends React.Component{
           this.setState({
             hour:     duration.get('hour'),
             minutes:  duration.get('minutes'),
-            worklogs: jsonRes.worklogs
+            worklogs: jsonRes.worklogs,
+            dataSource: this.state.dataSource.cloneWithRows(jsonRes.worklogs),
+            loaded: true,
           });
         });
-  }
-  setToken(res) {
+  },
+
+  setToken: function(res) {
     this.setState({token: res[0][1], userId: res[1][1]});
-  }
-  componentWillMount() {
-    this.setState({hour: "0"});
-    this.setState({hour: "0"});
+  },
+
+  getInitialState: function() {
+    return {
+      dataSource: new ListView.DataSource({
+        rowHasChanged: (row1, row2) => row1 !== row2,
+      }),
+      loaded: false,
+    };
+  },
+
+  componentWillMount: function() {
+    this.setState({hour: "0", minutes: "0"});
 
     AsyncStorage.multiGet([TOKEN_KEY,USER_ID_KEY])
       .then((value) => {
@@ -88,8 +64,9 @@ class Home extends React.Component{
       })
       .catch((error) => this.setState({message: error.message}))
       .done();
-  }
-  render(){
+  },
+
+  render: function(){
     return (
       <View style={defaultStyle.mainContainer}>
         <View style={styles.topLog}>
@@ -97,15 +74,109 @@ class Home extends React.Component{
             <Text style={styles.hour}>{this.state.hour}h</Text>
           </View>
           <View style={styles.minutesContainer}>
-            <Text style={styles.hour}>{this.state.minutes}h</Text>
+            <Text style={styles.minutes}>{this.state.minutes}m</Text>
           </View>
         </View>
         <View style={styles.bottomLog}>
-          <Text> Testing the Router </Text>
+          <ListView
+            dataSource={this.state.dataSource}
+            renderRow={this._renderRow}
+          />
         </View>
       </View>
     )
+  },
+
+  _renderRow: function(worklog) {
+    var _duration = moment.duration(worklog.duration, 'seconds');
+    var _hour     = _duration.get('hour');
+    var _minutes  = _duration.get('minute');
+
+    return (
+      <View style={styles.worklogContainer}>
+        <Text style={styles.startTime}>{moment(worklog.started_at).format('h:mm a')}</Text>
+
+        <View style={styles.projectNameContainer}>
+          <Text style={styles.wlProjectName}>{worklog.project_name}</Text>
+          <Text>{worklog.message}</Text>
+        </View>
+
+        <Text>{_hour == "0" ? '' : _hour}</Text>
+        <Text>{_hour == "0" ? '' : "h"}</Text>
+
+        <Text>{_minutes}</Text>
+        <Text>min</Text>
+      </View>
+    );
   }
-}
+});
+
+var styles = StyleSheet.create({
+  wlProjectName: {
+    fontSize: 15
+  },
+  projectNameContainer: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  startTime: {
+    fontSize: 18,
+    width: 100
+  },
+  topLog: {
+    flex: 2,
+    backgroundColor: '#ffffff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 50
+  },
+  bottomLog: {
+    flex: 3,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 10
+  },
+  hour: {
+    fontSize: 60,
+    fontWeight: 'bold',
+    color: '#fff'
+  },
+  minutes: {
+    fontSize: 18,
+    color: '#727F55'
+  },
+  hourContainer: {
+    borderRadius: 75, 
+    backgroundColor: '#4A4A4A',
+    width: 150, 
+    height: 150,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  minutesContainer: {
+    borderRadius: 30, 
+    position: 'absolute',
+    backgroundColor: '#B8E986',
+    width: 60, 
+    height: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    top: 100,
+    left: 210, 
+    right: 0,
+  },
+  listView: {
+    paddingTop: 20,
+    backgroundColor: '#F5FCFF',
+  },
+  worklogContainer: {
+    flexDirection: 'row',
+    padding: 10,
+    borderWidth: 1,
+    borderBottomColor: '#CCC',
+    borderColor: 'transparent'
+  },
+});
 
 module.exports = Home;
