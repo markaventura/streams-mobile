@@ -66,9 +66,11 @@ class Login extends React.Component{
   }
   goToHome() {
     this.setState({isLoading: true});
+
     api.signIn(this.state.username, this.state.password)
       .then((jsonRes) => 
-        {
+        { 
+          console.log(jsonRes);
           jsonRes = jsonRes || {};
           this.handleResponse(jsonRes);
         });
@@ -89,7 +91,10 @@ class Login extends React.Component{
       password: e.nativeEvent.text
     })
   }
+
   componentWillMount() {
+    this.props.hideNavBar();
+
     AsyncStorage.getItem(TOKEN_KEY)
       .then((value) => {
         if (value !== null){
@@ -100,7 +105,6 @@ class Login extends React.Component{
       .done();
   }
   render(){
-    console.log("baduy");
     return (
       <View style={styles.container}>
         <View style={styles.halfHeight}>

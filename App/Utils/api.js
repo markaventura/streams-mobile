@@ -7,11 +7,12 @@ var moment = require('moment-timezone');
 // POST //
 /////////
 var api = {
+
   signIn(username, password){
-    username = username.toLowerCase().trim();
-    password = password.toLowerCase().trim();
+    username = username.trim();
+    password = password.trim();
     
-    var params = `?user[email]=${username}&user[password]=password`;
+    var params = `?user[email]=${username}&user[password]=${password}`;
     var api_url = `/api/sign_in`
     var request_url = `${URL}${api_url}${params}`;
 
@@ -29,6 +30,7 @@ var api = {
       })
     }).then((res) => res.json());
   },
+
   getWorklogs(user_id, token){
     var api_url = `/api/users/${user_id}/worklogs`;
 
@@ -48,6 +50,7 @@ var api = {
       }
     }).then((res) => res.json());
   },
+
   getProjects(user_id, token){
     var api_url = `/api/users/${user_id}/projects`;
     var request_url = `${URL}${api_url}`;
@@ -62,6 +65,7 @@ var api = {
       }
     }).then((res) => res.json());
   }
+
 };
 
 module.exports = api;

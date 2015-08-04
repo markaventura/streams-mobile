@@ -52,6 +52,10 @@ var Home = React.createClass({
     };
   },
 
+  componentDidMount() {
+     this.props.showNavBar();
+  },
+
   componentWillMount: function() {
     this.setState({hour: "0", minutes: "0"});
 
