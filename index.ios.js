@@ -6,6 +6,7 @@
 
 var React = require('react-native');
 var Main = require('./App/Components/Main');
+var Home = require('./App/Components/Home');
 var Login = require('./App/Components/Login');
 var moment = require('moment');
 
@@ -50,7 +51,8 @@ var StreamsMobile = React.createClass({
         navigationBarHidden={this.state.navigationBarHidden}
         initialRoute={{
           title: 'Github Note Taker',
-          component: nextScreen,
+          component: Main,
+          leftButtonIcon: this.state.gearIcon,
           passProps: {
             hideNavBar: this.hideNavBar,
             showNavBar: this.showNavBar,

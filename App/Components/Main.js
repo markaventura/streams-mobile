@@ -7,6 +7,9 @@ var now = moment().format('LL');
 
 const TOKEN_KEY = '@StreamsMobileUser:token';
 
+var Icon = require('react-native-vector-icons/Ionicons');
+
+
 var {
   View,
   Text,
@@ -20,10 +23,22 @@ var styles = StyleSheet.create({
 
 class Main extends React.Component{
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      nextButtonIcon: null,
+      backButtonIcon: null,
+      requestLoaded: false
+    };
+  }
+
   navigateToHome(){
     this.props.navigator.push({
       component: Home,
       title: now,
+      rightButtonIcon: this.state.nextButtonIcon,
+      leftButtonIcon: this.state.backButtonIcon,
       passProps: {
         hideNavBar: this.props.hideNavBar,
         showNavBar: this.props.showNavBar,
@@ -42,19 +57,45 @@ class Main extends React.Component{
     });
   }
 
-  componentWillMount() {
-    this.setState({navigationBarHidden: false});
+  initButtons() {
+    Icon.getImageSource('navicon', 30, 'red')
+      .then((source) => {
+        this.setState({ backButtonIcon: source });
+    }).done();
+  }
 
+  initSecondButton() {
+    Icon.getImageSource('ios-settings', 30, 'red')
+      .then((source) => {
+        this.setState({ nextButtonIcon: source });
+    }).done();
+  }
+
+  componentWillMount(){
+    this.initButtons();
+  }
+
+  navigateToInitialView() {
     AsyncStorage.getItem(TOKEN_KEY)
       .then((value) => {
         if (value !== null){
-          this.navigateToHome()
+          this.navigateToHome();
         } else {
-          this.navigateToLogin()
+          this.navigateToLogin();
         }
       })
       .catch((error) => this.setState({message: error.message}))
       .done();
+  }
+
+  componentDidUpdate() {
+    if(this.state.backButtonIcon && this.state.nextButtonIcon == null){
+      this.initSecondButton();
+    }
+
+    if(this.state.backButtonIcon && this.state.nextButtonIcon) {
+      this.navigateToInitialView();
+    }
   }
 
   render(){
